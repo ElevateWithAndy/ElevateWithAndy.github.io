@@ -64,6 +64,7 @@ const structuredCategories = await Promise.all(
     }
 
     return {
+      id: pl.id,
       name: pl.name,
       description: pl.description,
       videos: videos
@@ -105,9 +106,16 @@ const structuredCategories = await Promise.all(
           
           <!-- Category Headings -->
           <div class="border-b border-neutral-100 pb-4 mb-5 block w-full">
-            <h2 class="text-xs font-bold tracking-widest text-[#7a7480] uppercase">
-              {category.name}
-            </h2>
+            <a 
+              href={`https://youtube.com/playlist?list=${category.id}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-block group focus:outline-none"
+            > 
+              <h2 class="text-xs font-bold tracking-widest text-[#7a7480] uppercase group-hover:underline decoration-1 underline-offset-4 transition-all">
+                {category.name}
+              </h2>
+            </a>
             <p class="text-xs text-[#7a7480] font-light mt-2 max-w-2xl leading-relaxed whitespace-pre-line">
               {category.description}
             </p>
