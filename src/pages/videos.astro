@@ -3,44 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import playlists from '../content/videos/playlists.json';
 
 const API_KEY = String(import.meta.env.YOUTUBE_API_KEY).trim();
-const CHANNEL_ID = "UCIz5Ip_0-j4m7T2PSA34G3A";
-
-// 1. Fetch Subscriber Count
-let subscriberCount = "";
-try {
-  const statsUrl = `https://googleapis.com{CHANNEL_ID}&key=${API_KEY}`;
-  const statsResponse = await fetch(statsUrl, {
-    headers: { 'Referer': 'https://elevatewithandy.com' }
-  });
-  
-  if (statsResponse.ok) {
-    const statsData = await statsResponse.json();
-    const rawCount = statsData.items?.[0]?.statistics?.subscriberCount; //
-    
-    if (rawCount) {
-      // Format number (e.g., 12500 -> 12.5K)
-      const countNum = parseInt(rawCount, 10);
-      subscriberCount = countNum >= 1000 
-        ? (countNum / 1000).toFixed(1).replace(/\.0$/, '') + 'K' 
-        : countNum.toString();
-    }
-  }
-} catch (e) {
-  console.error("Failed fetching subscriber count:", e);
-  // Temporary fallback so you can see how it looks while working on localhost
-  if (import.meta.env.DEV) {
-    subscriberCount = "12.5K"; 
-  }
-}
-// 2. Fetch Playlist Videos
 const structuredCategories = await Promise.all(
   playlists.map(async (pl) => {
     let videos = [];
     
     try {
-      const url = `https://googleapis.com{pl.id}&key=${API_KEY}`;
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=${pl.id}&key=${API_KEY}`;
       const response = await fetch(url, {
-        headers: { 'Referer': 'https://elevatewithandy.com' }
+        headers: {
+          'Referer': 'https://elevatewithandy.com'
+        }
       });
       
       if (response.ok) {
@@ -50,7 +22,7 @@ const structuredCategories = await Promise.all(
           const videoId = item.snippet?.resourceId?.videoId || '';
           return {
             title: item.snippet?.title || 'Movement Session',
-            youtubeUrl: `https://youtube.com{videoId}&list=${pl.id}`,
+            youtubeUrl: `https://youtube.com/watch?v=${videoId}&list=${pl.id}`,
             thumbnail: item.snippet?.thumbnails?.maxres?.url || 
                       item.snippet?.thumbnails?.high?.url || 
                       `https://youtube.com{videoId}/maxresdefault.jpg`
@@ -78,25 +50,9 @@ const structuredCategories = await Promise.all(
     <!-- Header Title Section -->
     <div class="text-center max-w-xl mx-auto mb-20">
       <h1 class="text-3xl font-light tracking-wide text-[#1e1b21] uppercase">On-Demand Practice</h1>
-      <p class="text-sm text-[#7a7480] mt-3 font-light leading-relaxed mb-6">
+      <p class="text-sm text-[#7a7480] mt-3 font-light leading-relaxed">
         Sequences and training sets sorted by movement discipline.
       </p>
-      
-      <a 
-        href={`https://youtube.com{CHANNEL_ID}?sub_confirmation=1`} 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        class="inline-flex items-center border border-[#7a7480] rounded overflow-hidden text-xs uppercase tracking-wider transition-all duration-200 hover:opacity-90"
-      >
-        <span class="bg-[#7a7480] text-white px-4 py-2.5 font-normal">
-          Subscribe to my Channel
-        </span>
-        {subscriberCount && (
-          <span class="bg-white text-[#7a7480] px-3 py-2.5 font-medium border-l border-[#7a7480]/30">
-            {subscriberCount}
-          </span>
-        )}
-      </a>
     </div>
 
     <!-- Playlist Category Grid Blocks -->
