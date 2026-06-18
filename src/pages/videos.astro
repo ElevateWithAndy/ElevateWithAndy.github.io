@@ -3,6 +3,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import playlists from '../content/videos/playlists.json';
 
 const API_KEY = String(import.meta.env.YOUTUBE_API_KEY).trim();
+
+const CHANNEL_ID = "UCIz5Ip_0-j4m7T2PSA34G3A";
+
+let subscriberCount = "";
+try {
+  const statsUrl = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=UCIz5Ip_0-j4m7T2PSA34G3A&key=${API_KEY}`;
+  const statsResponse = await fetch(statsUrl, {
+    headers: { 'Referer': 'https://elevatewithandy.com' }
+  });
+  
+  if (statsResponse.ok) {
+    const statsData = await statsResponse.json();
+    // Corrected the array traversal safely 
+    const rawCount = statsData.items && statsData.items[0]?.statistics?.subscriberCount;
+    
+    if (rawCount) {
+      const countNum = parseInt(rawCount, 10);
+      subscriberCount = countNum >= 1000 
+        ? (countNum / 1000).toFixed(1).replace(/\.0$/, '') + 'K' 
+        : countNum.toString();
+    }
+  }
+} catch (e) {
+  console.error("Failed fetching subscriber count:", e);
+}
+
+
 const structuredCategories = await Promise.all(
   playlists.map(async (pl) => {
     let videos = [];
@@ -53,6 +80,22 @@ const structuredCategories = await Promise.all(
       <p class="text-sm text-[#7a7480] mt-3 font-light leading-relaxed">
         Sequences and training sets sorted by movement discipline.
       </p>
+        <a 
+
+        href={`https://youtube.com/channel/${CHANNEL_ID}?sub_confirmation=1`} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="inline-flex items-center border border-[#7a7480] rounded overflow-hidden text-xs uppercase tracking-wider transition-all duration-200 hover:opacity-90 mx-auto text-left"
+        >
+        <span class="bg-[#7a7480] text-white px-4 py-2.5 font-normal whitespace-nowrap">
+          Subscribe to my channel
+        </span>
+        {subscriberCount && (
+          <span class="bg-white text-[#7a7480] px-3 py-2.5 font-medium border-l border-[#7a7480]/30 h-full flex items-center">
+            {subscriberCount}
+          </span>
+        )}
+      </a>
     </div>
 
     <!-- Playlist Category Grid Blocks -->
