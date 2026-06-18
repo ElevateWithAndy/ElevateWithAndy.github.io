@@ -14,6 +14,9 @@ const rawPosts = await getCollection('LivingNotebook') || [];
 const recentPosts = rawPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 2);
+
+// Your Elevate with Andy Trailer ID
+const TRAILER_VIDEO_ID = "NZqYQntfNKQ"; 
 ---
 
 <BaseLayout title={title}>
@@ -25,6 +28,14 @@ const recentPosts = rawPosts
     <p class="text-base text-[#7a7480] mt-6 max-w-xl mx-auto font-light leading-relaxed">
       {hero.body}
     </p>
+  </section>
+
+  <!-- Section 1.5: Page Trailer Video Player -->
+  <section class="max-w-2xl mx-auto px-6 pb-16">
+    <div class="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-xl shadow-neutral-100 border border-neutral-100">
+      <!-- Google's API automatically swaps this target div with the player iframe -->
+      <div id="trailer-player"></div>
+    </div>
   </section>
 
   <!-- Section 2: Three Pillars Showcase -->
@@ -98,3 +109,33 @@ const recentPosts = rawPosts
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* Instructs the injected Google element to stretch across the fluid container aspect ratio */
+  #trailer-player {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>
+
+<script is:inline define:vars={{ TRAILER_VIDEO_ID }}>
+  // 1. Fetch the correct IFrame API from Google's servers
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api"; // <-- FIXED URL
+  const firstScriptTag = document.getElementsByTagName('script')[0]; // <-- FIXED reference
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // 2. Initialize the player client-side once ready
+  window.onYouTubeIframeAPIReady = function() {
+    new YT.Player('trailer-player', {
+      videoId: TRAILER_VIDEO_ID,
+      playerVars: {
+        'autoplay': 1,        
+        'mute': 1,            
+        'controls': 1,        
+        'rel': 0,             
+        'modestbranding': 1   
+      }
+    });
+  }
+</script>
