@@ -22,7 +22,14 @@
     "category": "Studio Essentials",
     "items": [
       { "link": "https://amzn.to/4uf92uh", "name": "Molekule Air Purifier Mini+", "desc": "", "img": "Molekule.jpg" },
-      { "link": "https://amzn.to/3SpeWLR", "name": "Mini Boxed Water", "desc": ".", "img": "BoxedWater.jpg" }
+      { "link": "https://amzn.to/3SpeWLR", "name": "Mini Boxed Water", "desc": ".", "img": "BoxedWater.jpg" },
+      { "link": "https://amzn.to/4w2JYrA", "name": "ToeSox Grip Socks", "desc": ".", "img": "" }
+    ]
+  },
+  {
+    "category": "Studio Equipment",
+    "items": [
+      { "link": "https://amzn.to/4w1wXOU", "name": "Balanced Body CoreAlign", "desc": ".", "img": "" }
     ]
   },
   {
